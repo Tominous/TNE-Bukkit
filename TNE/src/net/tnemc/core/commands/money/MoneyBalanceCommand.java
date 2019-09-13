@@ -40,19 +40,19 @@ public class MoneyBalanceCommand extends TNECommand {
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "balance";
   }
 
   @Override
-  public String[] getAliases() {
+  public String[] aliases() {
     return new String[] {
         "bal"
     };
   }
 
   @Override
-  public String getNode() {
+  public String node() {
     return "tne.money.balance";
   }
 
@@ -62,7 +62,7 @@ public class MoneyBalanceCommand extends TNECommand {
   }
 
   @Override
-  public String getHelp() {
+  public String helpLine() {
     return "Messages.Commands.Money.Balance";
   }
 
@@ -143,8 +143,8 @@ public class MoneyBalanceCommand extends TNECommand {
           Message m = new Message("Messages.Money.HoldingsMultiSingle");
           m.addVariable("$currency", curName);
           m.addVariable("$amount", CurrencyFormatter.format(TNE.manager().currencyManager().get(w, curName), w, balances.get(curName), id.toString()));
-          if(TNE.instance().api().getBoolean("Core.Currency.Info.FormatMoney")) {
-            m.addVariable("$amount", CurrencyFormatter.format(TNE.manager().currencyManager().get(w, curName), w, balances.get(curName), id.toString()));
+          if(!TNE.instance().api().getBoolean("Core.Currency.Info.FormatMoney")) {
+            m.addVariable("$amount", balances.get(curName).toPlainString());
           } else {
             m.addVariable("$amount", CurrencyFormatter.format(TNE.manager().currencyManager().get(w, curName), w, balances.get(curName), id.toString()));
           }
@@ -159,8 +159,8 @@ public class MoneyBalanceCommand extends TNECommand {
         message.addVariable("$player", account.displayName());
         message.addVariable("$world", world);
         message.addVariable("$currency", currencyName);
-        if (TNE.instance().api().getBoolean("Core.Currency.Info.FormatMoney")) {
-          message.addVariable("$amount", CurrencyFormatter.format(TNE.manager().currencyManager().get(world, currencyName), world, balances.get(currencyName), id.toString()));
+        if (!TNE.instance().api().getBoolean("Core.Currency.Info.FormatMoney")) {
+          message.addVariable("$amount", balances.get(currencyName).toPlainString());
         } else {
           message.addVariable("$amount", CurrencyFormatter.format(TNE.manager().currencyManager().get(world, currencyName), world, balances.get(currencyName), id.toString()));
         }
