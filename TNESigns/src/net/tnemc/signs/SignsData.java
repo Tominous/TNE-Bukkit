@@ -1,23 +1,23 @@
 package net.tnemc.signs;
 
 import com.github.tnerevival.core.db.SQLDatabase;
-import com.github.tnerevival.serializable.SerializableItemStack;
 import com.github.tnerevival.serializable.SerializableLocation;
 import net.tnemc.core.TNE;
+import net.tnemc.core.item.SerialItem;
 import net.tnemc.signs.signs.TNESign;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Sign;
-import org.bukkit.inventory.ItemStack;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The New Economy Minecraft Server Plugin
@@ -30,301 +30,206 @@ import java.util.UUID;
  * Created by creatorfromhell on 06/30/2017.
  */
 public class SignsData {
-  //sign_location <- unique
-  //sign_attached
-  //sign_owner
-  //sign_type
 
   public static final String prefix = TNE.saveManager().getTNEManager().getPrefix();
 
-  public static final String SIGNS_TABLE = "CREATE TABLE IF NOT EXISTS " + prefix + "_SIGNS (" +
-      "`sign_location` VARCHAR(255) NOT NULL UNIQUE," +
-      "`sign_attached` VARCHAR(255)," +
-      "`sign_chest` VARCHAR(255) NOT NULL DEFAULT ''," +
-      "`sign_owner` VARCHAR(36) NOT NULL," +
-      "`sign_type` VARCHAR(100) NOT NULL," +
-      "`sign_creator` VARCHAR(36) NOT NULL," +
-      "`sign_created` BIGINT(60)," +
-      "`sign_step` INTEGER," +
-      "`sign_admin` BOOLEAN NOT NULL DEFAULT 0," +
-      "`sign_data` TEXT NOT NULL" +
-      ") ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-
-  public static final String SIGNS_TABLE_H2 = "CREATE TABLE IF NOT EXISTS " + prefix + "_SIGNS (" +
-      "`sign_location` VARCHAR(255) NOT NULL UNIQUE," +
-      "`sign_attached` VARCHAR(255)," +
-      "`sign_chest` VARCHAR(420) NOT NULL DEFAULT ''," +
-      "`sign_owner` VARCHAR(36) NOT NULL," +
-      "`sign_type` VARCHAR(100) NOT NULL," +
-      "`sign_creator` VARCHAR(36) NOT NULL," +
-      "`sign_created` BIGINT(60)," +
-      "`sign_step` INTEGER," +
-      "`sign_admin` BOOLEAN NOT NULL DEFAULT 0," +
-      "`sign_data` TEXT NOT NULL" +
-      ") ENGINE = INNODB;";
-
   private static final String SIGNS_UPDATE_STEP = "UPDATE " + prefix + "_SIGNS SET sign_step = ? WHERE sign_location = ?";
   private static final String SIGNS_UPDATE_CHEST = "UPDATE " + prefix + "_SIGNS SET sign_chest = ? WHERE sign_location = ?";
-  private static final String SIGNS_LOAD_CHEST = "SELECT sign_chest FROM " + prefix + "_SIGNS WHERE sign_location = ?";
   public static final String SIGNS_CHEST_CHECK = "SELECT sign_owner FROM " + SignsData.prefix + "_SIGNS WHERE sign_chest = ?";
   private static final String SIGNS_SAVE = "INSERT INTO " + prefix + "_SIGNS (sign_location, sign_attached, sign_owner, sign_type, sign_creator, sign_created, sign_step, sign_admin, sign_data) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                                            "ON DUPLICATE KEY UPDATE sign_attached = ?, sign_owner = ?, sign_type = ?, sign_creator = ?, sign_created = ?, sign_step = ?, sign_admin = ?, sign_data = ?;";
-  private static final String SIGNS_LOAD_OWNER = "SELECT sign_location, sign_attached, sign_owner, sign_type, sign_creator, sign_created, sign_step, sign_admin, sign_data FROM " + prefix + "_SIGNS WHERE sign_owner = ? AND sign_type = ?";
-  private static final String SIGNS_CHANGE_OWNER = "UPDATE " + prefix + "_SIGNS SET sign_owner = ? WHERE sign_owner = ?";
-  private static final String SIGNS_LOAD_CREATOR = "SELECT sign_location, sign_attached, sign_owner, sign_type, sign_creator, sign_created, sign_step, sign_admin, sign_data FROM " + prefix + "_SIGNS WHERE sign_creator = ? AND sign_type = ?";
-  private static final String SIGNS_LOAD_LOCATION = "SELECT sign_location, sign_attached, sign_owner, sign_type, sign_creator, sign_created, sign_step, sign_admin, sign_data FROM " + prefix + "_SIGNS WHERE sign_location = ?";
-  private static final String SIGNS_LOAD_ATTACHED = "SELECT sign_location, sign_attached, sign_owner, sign_type, sign_creator, sign_created, sign_step, sign_admin, sign_data FROM " + prefix + "_SIGNS WHERE sign_attached = ?";
   private static final String SIGNS_DELETE = "DELETE FROM " + prefix + "_SIGNS WHERE sign_location = ?";
 
   //Item Sign Queries
-  public static final String ITEM_CHECK = "SELECT item_amount FROM " + SignsData.prefix + "_SIGNS_ITEMS WHERE sign_location = ?";
-  public static final String ITEM_OFFER_LOAD = "SELECT item_offer, item_amount FROM " + SignsData.prefix + "_SIGNS_ITEMS WHERE sign_location = ?";
-  public static final String ITEM_TRADE_LOAD = "SELECT item_trade FROM " + SignsData.prefix + "_SIGNS_ITEMS WHERE sign_location = ?";
-  public static final String ITEM_CURRENCY_LOAD = "SELECT item_cost FROM " + SignsData.prefix + "_SIGNS_ITEMS WHERE sign_location = ?";
-  public static final String ITEM_CURRENCY_CHECK = "SELECT item_currency FROM " + SignsData.prefix + "_SIGNS_ITEMS WHERE sign_location = ?";
-  public static final String ITEM_ADMIN_CHECK = "SELECT sign_admin FROM " + SignsData.prefix + "_SIGNS WHERE sign_location = ?";
-  public static final String ITEM_SELLING_CHECK = "SELECT item_selling FROM " + SignsData.prefix + "_SIGNS_ITEMS WHERE sign_location = ?";
   public static final String ITEM_OFFER_UPDATE = "UPDATE " + SignsData.prefix + "_SIGNS_ITEMS SET item_offer = ?, item_amount = ?, item_selling = ? WHERE sign_location = ?";
-  public static final String ITEM_OFFER_ADD = "INSERT INTO " + SignsData.prefix + "_SIGNS_ITEMS (item_offer, item_trade, item_amount, item_selling, sign_location) VALUES(?, ?, ?, ?, ?)";
+  public static final String ITEM_OFFER_ADD = "INSERT INTO " + SignsData.prefix + "_SIGNS_ITEMS (item_offer, item_trade, item_amount, item_selling, sign_location) VALUES(?, ?, ?, ?, ?) " +
+          "ON DUPLICATE KEY UPDATE item_offer = VALUES(item_offer), item_trade = VALUES(item_trade), item_amount = VALUES(item_amount), item_selling = VALUES(item_selling), sign_location = VALUES(sign_location)";
   public static final String ITEM_TRADE_UPDATE = "UPDATE " + SignsData.prefix + "_SIGNS_ITEMS SET item_currency = ?, item_cost = ?, item_trade = ? WHERE sign_location = ?";
+  private static final String ITEM_SIGN_DELETE = "DELETE FROM " + SignsData.prefix + "_SIGNS_ITEMS WHERE sign_location = ?";
 
+  public static final ExecutorService POOL = Executors.newCachedThreadPool();
 
   public static void saveSign(TNESign sign) throws SQLException {
-    SQLDatabase.executePreparedUpdate(SIGNS_SAVE, new Object[] {
-        new SerializableLocation(sign.getLocation()).toString(),
-        new SerializableLocation(sign.getAttached()).toString(),
-        sign.getOwner().toString(),
-        sign.getType(),
-        sign.getCreator().toString(),
-        sign.getCreationDate(),
-        sign.getStep(),
-        sign.isAdmin(),
-        sign.saveExtraData(),
-        new SerializableLocation(sign.getAttached()).toString(),
-        sign.getOwner().toString(),
-        sign.getType(),
-        sign.getCreator().toString(),
-        sign.getCreationDate(),
-        sign.getStep(),
-        sign.isAdmin(),
-        sign.saveExtraData()
+    SignsModule.instance().getSignDataStore().setSignData(sign.getLocation(), sign);
+    POOL.execute(() -> {
+      try {
+        SQLDatabase.executePreparedUpdate(SIGNS_SAVE, new Object[] {
+                new SerializableLocation(sign.getLocation()).toString(),
+                new SerializableLocation(sign.getAttached()).toString(),
+                sign.getOwner().toString(),
+                sign.getType(),
+                sign.getCreator().toString(),
+                sign.getCreationDate(),
+                sign.getStep(),
+                sign.isAdmin(),
+                sign.saveExtraData(),
+                new SerializableLocation(sign.getAttached()).toString(),
+                sign.getOwner().toString(),
+                sign.getType(),
+                sign.getCreator().toString(),
+                sign.getCreationDate(),
+                sign.getStep(),
+                sign.isAdmin(),
+                sign.saveExtraData()
+        });
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     });
-
-  }
-
-  public static boolean hasColumn() {
-
-    boolean exist = false;
-    SQLDatabase.open();
-    try {
-      exist = SQLDatabase.getDb().getConnection().getMetaData().getColumns(null, null, SignsData.prefix + "_SIGNS", "sign_admin").next();
-    } catch(Exception ignore) {}
-
-    SQLDatabase.close();
-    return exist;
   }
 
   public static void updateStep(final Location location, final int step) throws SQLException {
-    SQLDatabase.executePreparedUpdate(SIGNS_UPDATE_STEP, new Object[] {
-        step,
-        new SerializableLocation(location).toString()
+    loadSign(location).setStep(step);
+    POOL.execute(() -> {
+      try {
+        SQLDatabase.executePreparedUpdate(SIGNS_UPDATE_STEP, new Object[] {
+                step,
+                new SerializableLocation(location).toString()
+        });
+      } catch (Exception e) {
+        e.printStackTrace();;
+      }
     });
   }
 
   public static void updateChest(final Location location, final Location chest) throws SQLException {
-    SQLDatabase.executePreparedUpdate(SIGNS_UPDATE_CHEST, new Object[] {
-        new SerializableLocation(chest).toString(),
-        new SerializableLocation(location).toString()
-    });
-  }
-
-  public static TNESign loadSign(Location location) throws SQLException {
-    TNESign sign = null;
-
-    SQLDatabase.open();
-    try(PreparedStatement statement = SQLDatabase.getDb().getConnection().prepareStatement(SIGNS_LOAD_LOCATION);
-        ResultSet results = SQLDatabase.executePreparedQuery(statement, new Object[] {
-            new SerializableLocation(location).toString()
-        })) {
-      if(results.next()) {
-        sign = new TNESign(SerializableLocation.fromString(results.getString("sign_location")).getLocation(),
-            SerializableLocation.fromString(results.getString("sign_attached")).getLocation(),
-            results.getString("sign_type"),
-            UUID.fromString(results.getString("sign_owner")),
-            UUID.fromString(results.getString("sign_creator")),
-            results.getLong("sign_created"),
-            results.getBoolean("sign_admin"),
-            results.getInt("sign_step"));
-        sign.loadExtraData(results.getString("sign_data"));
+    loadSign(location).setChest((Chest) chest.getBlock().getState());
+    POOL.execute(() -> {
+      try {
+        SQLDatabase.executePreparedUpdate(SIGNS_UPDATE_CHEST, new Object[] {
+                new SerializableLocation(chest).toString(),
+                new SerializableLocation(location).toString()
+        });
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-    } catch(Exception e) {
-      TNE.debug(e);
-    }
-    SQLDatabase.close();
-    return sign;
-  }
-
-  public static void updateOwner(UUID old, UUID newOwner) {
-    SQLDatabase.executePreparedUpdate(SIGNS_CHANGE_OWNER, new Object[] {
-        newOwner.toString(),
-        old.toString()
     });
   }
 
-  public static void changeOwner(UUID old, String type, String newName) throws SQLException {
-    Collection<TNESign> signs = loadSigns(old.toString(), type);
+  public static TNESign loadSign(Location location) {
+    return SignsModule.instance().getSignDataStore().getSign(location);
+  }
 
-    for(TNESign sign : signs) {
-      Bukkit.getScheduler().runTask(TNE.instance(), ()->{
-        Sign signState = (Sign)sign.getLocation().getBlock().getState();
-        signState.setLine(1, newName);
-        signState.update();
-      });
+  public static Map<Location, TNESign> loadSignsFromDatabase(List<Location> locations) {
+    Map<Location, TNESign> signs = new HashMap<>();
+    try(Connection connection = SQLDatabase.getDataSource().getConnection()) {
+      StringBuilder builder = new StringBuilder()
+              .append("SELECT signs.sign_location, signs.sign_chest, signs.sign_attached, signs.sign_owner, signs.sign_type, signs.sign_creator, ")
+              .append("signs.sign_created, signs.sign_step, signs.sign_admin, signs.sign_data, signs_items.item_offer, signs_items.item_amount, ")
+              .append("signs_items.item_trade, signs_items.item_currency, signs_items.item_cost, signs_items.item_selling ")
+              .append("FROM ").append(prefix).append("_SIGNS signs LEFT JOIN ").append(prefix).append("_SIGNS_ITEMS signs_items ON signs.sign_location = signs_items.sign_location ")
+              .append("WHERE");
+      for(int i=0; i < locations.size(); i++) {
+        builder.append(" ");
+        if(i != 0) {
+          builder.append("OR ");
+        }
+
+        builder.append("signs.sign_location = '").append(new SerializableLocation(locations.get(i)).toString()).append("'");
+      }
+
+      ResultSet resultSet = connection.prepareStatement(builder.toString()).executeQuery();
+      while(resultSet.next()) {
+        Location location = SerializableLocation.fromString(resultSet.getString("sign_location")).getLocation();
+        TNESign sign = new TNESign(
+                location,
+                SerializableLocation.fromString(resultSet.getString("sign_attached")).getLocation(),
+                resultSet.getString("sign_type"),
+                UUID.fromString(resultSet.getString("sign_owner")),
+                UUID.fromString(resultSet.getString("sign_creator")),
+                resultSet.getLong("sign_created"),
+                resultSet.getBoolean("sign_admin"),
+                resultSet.getInt("sign_step")
+        );
+        sign.loadExtraData(resultSet.getString("sign_data"));
+
+        String chestLocation = resultSet.getString("sign_chest");
+        if(chestLocation != null && chestLocation.length() > 0) {
+          BlockState state = SerializableLocation.fromString(chestLocation).getLocation().getBlock().getState();
+          if(state instanceof Chest) {
+            sign.setChest((Chest) state);
+          }
+        }
+
+        String itemTrade = resultSet.getString("item_trade");
+        if(itemTrade != null && itemTrade.length() > 0 && itemTrade.charAt(0) == '{') {
+          SerialItem item = SerialItem.fromJSON((JSONObject) new JSONParser().parse(itemTrade));
+          if(item != null) {
+            sign.setTrade(item.getStack());
+          }
+        }
+
+        String itemOffer = resultSet.getString("item_offer");
+        if(itemOffer != null && itemOffer.length() > 0 && itemOffer.charAt(0) == '{') {
+          SerialItem item = SerialItem.fromJSON((JSONObject) new JSONParser().parse(itemOffer));
+          if(item != null) {
+            sign.setOffer(item.getStack());
+          }
+        }
+
+        sign.setCost(resultSet.getBigDecimal("item_cost"));
+        sign.setCurrency(resultSet.getBoolean("item_currency"));
+        sign.setSelling(resultSet.getBoolean("item_selling"));
+
+        signs.put(location, sign);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+    return signs;
   }
 
   public static TNESign loadSignAttached(Location location) throws SQLException {
-    TNESign sign = null;
-
-    SQLDatabase.open();
-    try(PreparedStatement statement = SQLDatabase.getDb().getConnection().prepareStatement(SIGNS_LOAD_ATTACHED);
-        ResultSet results = SQLDatabase.executePreparedQuery(statement, new Object[] {
-            new SerializableLocation(location).toString()
-        })) {
-      if(results.next()) {
-        sign = new TNESign(SerializableLocation.fromString(results.getString("sign_location")).getLocation(),
-            SerializableLocation.fromString(results.getString("sign_attached")).getLocation(),
-            results.getString("sign_type"),
-            UUID.fromString(results.getString("sign_owner")),
-            UUID.fromString(results.getString("sign_creator")),
-            results.getLong("sign_created"),
-            results.getBoolean("sign_admin"),
-            results.getInt("sign_step"));
-        sign.loadExtraData(results.getString("sign_data"));
-      }
-    } catch(Exception e) {
-      TNE.debug(e);
-    }
-    SQLDatabase.close();
-    return sign;
+    return loadSign(location);
   }
 
   public static Collection<TNESign> loadSignsCreator(String creator, String type) throws SQLException {
-    List<TNESign> signs = new ArrayList<>();
-
-    SQLDatabase.open();
-    try(PreparedStatement statement = SQLDatabase.getDb().getConnection().prepareStatement(SIGNS_LOAD_CREATOR);
-        ResultSet results = SQLDatabase.executePreparedQuery(statement, new Object[] {
-            creator, type
-        })) {
-      while(results.next()) {
-        signs.add(
-          new TNESign(SerializableLocation.fromString(results.getString("sign_location")).getLocation(),
-              SerializableLocation.fromString(results.getString("sign_attached")).getLocation(),
-              results.getString("sign_type"),
-              UUID.fromString(results.getString("sign_owner")),
-              UUID.fromString(results.getString("sign_creator")),
-              results.getLong("sign_created"),
-              results.getBoolean("sign_admin"),
-              results.getInt("sign_step"),
-              results.getString("sign_data"))
-        );
+    List<TNESign> applicable = new ArrayList<>();
+    for(TNESign sign : SignsModule.instance().getSignDataStore().getSigns()) {
+      if(sign != null &&
+              sign.getCreator() != null &&
+              sign.getType() != null &&
+              sign.getCreator().toString().equals(creator) &&
+              sign.getType().equals(type)) {
+        applicable.add(sign);
       }
-    } catch(Exception e) {
-      TNE.debug(e);
     }
-    SQLDatabase.close();
-
-    return signs;
+    return applicable;
   }
 
   public static Collection<TNESign> loadSigns(String owner, String type) throws SQLException {
-    List<TNESign> signs = new ArrayList<>();
-
-    SQLDatabase.open();
-    try(PreparedStatement statement = SQLDatabase.getDb().getConnection().prepareStatement(SIGNS_LOAD_OWNER);
-        ResultSet results = SQLDatabase.executePreparedQuery(statement, new Object[] {
-            owner, type
-        })) {
-      while(results.next()) {
-        signs.add(
-            new TNESign(SerializableLocation.fromString(results.getString("sign_location")).getLocation(),
-                SerializableLocation.fromString(results.getString("sign_attached")).getLocation(),
-                results.getString("sign_type"),
-                UUID.fromString(results.getString("sign_owner")),
-                UUID.fromString(results.getString("sign_creator")),
-                results.getLong("sign_created"),
-                results.getBoolean("sign_admin"),
-                results.getInt("sign_step"),
-                results.getString("sign_data"))
-        );
+    List<TNESign> applicable = new ArrayList<>();
+    for(TNESign sign : SignsModule.instance().getSignDataStore().getSigns()) {
+      if(sign.getOwner().toString().equals(owner) &&
+              sign.getType().equals(type)) {
+        applicable.add(sign);
       }
-    } catch(Exception e) {
-      TNE.debug(e);
     }
-
-    SQLDatabase.close();
-    return signs;
-  }
-
-  public static ItemStack getItem(Location location) throws SQLException {
-    ItemStack item = null;
-
-    SQLDatabase.open();
-    try(PreparedStatement statement = SQLDatabase.getDb().getConnection().prepareStatement(ITEM_OFFER_LOAD);
-        ResultSet results = SQLDatabase.executePreparedQuery(statement, new Object[] {
-            new SerializableLocation(location)
-        })) {
-
-      if(results.next()) {
-        item = SerializableItemStack.fromString(results.getString("item_offer")).toItemStack();
-      }
-    } catch(Exception e) {
-      TNE.debug(e);
-    }
-    SQLDatabase.close();
-    return item;
-  }
-
-  public static ItemStack getTrade(Location location) throws SQLException {
-    ItemStack item = null;
-
-    SQLDatabase.open();
-    try(PreparedStatement statement = SQLDatabase.getDb().getConnection().prepareStatement(ITEM_TRADE_LOAD);
-        ResultSet results = SQLDatabase.executePreparedQuery(statement, new Object[] {
-            new SerializableLocation(location)
-        })) {
-
-      if(results.next()) {
-        item = SerializableItemStack.fromString(results.getString("item_trade")).toItemStack();
-      }
-    } catch(Exception e) {
-      TNE.debug(e);
-    }
-    SQLDatabase.close();
-    return item;
+    return applicable;
   }
 
   public static Chest chest(Location location) throws SQLException {
-    Location chestLocation = null;
-
-    SQLDatabase.open();
-    try(PreparedStatement statement = SQLDatabase.getDb().getConnection().prepareStatement(SIGNS_LOAD_CHEST);
-        ResultSet results = SQLDatabase.executePreparedQuery(statement, new Object[] {
-            new SerializableLocation(location).toString()
-        })) {
-
-      if(results.next()) {
-        chestLocation = SerializableLocation.fromString(results.getString("sign_chest")).getLocation();
-      }
-    } catch(Exception e) {
-      TNE.debug(e);
-    }
-    SQLDatabase.close();
-    return (Chest)(chestLocation.getBlock().getState());
+    return SignsModule.instance().getSignDataStore().getSign(location).getChest();
   }
 
   public static void deleteSign(Location location) throws SQLException {
-    SQLDatabase.executePreparedUpdate(SIGNS_DELETE, new Object[] { new SerializableLocation(location).toString()});
+    SignsModule.instance().getSignDataStore().unloadSign(location);
+    POOL.execute(() -> {
+      try(Connection connection = SQLDatabase.getDataSource().getConnection()) {
+        String serializedLocation = new SerializableLocation(location).toString();
+        {
+          PreparedStatement statement = connection.prepareStatement(SIGNS_DELETE);
+          statement.setString(1, serializedLocation);
+          statement.execute();
+        }
+        {
+          PreparedStatement statement = connection.prepareStatement(ITEM_SIGN_DELETE);
+          statement.setString(1, serializedLocation);
+          statement.execute();
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    });
   }
 }

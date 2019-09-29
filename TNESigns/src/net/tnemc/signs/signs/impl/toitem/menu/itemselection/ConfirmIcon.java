@@ -45,7 +45,7 @@ public class ConfirmIcon extends Icon {
     final Location location = (Location) TNE.menuManager().getViewerData(id, "action_shop");
 
     try {
-      ItemSign.saveItemSelection(location, stack, selling);
+      ItemSign.saveItemOffer(location, stack, selling);
       SignsData.updateStep(location, 2);
 
       this.message = ChatColor.WHITE + "Changed shop offer to " + amount + " of " + stack.getType().name() + "."

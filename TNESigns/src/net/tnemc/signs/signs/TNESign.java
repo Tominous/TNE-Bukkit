@@ -1,7 +1,10 @@
 package net.tnemc.signs.signs;
 
 import org.bukkit.Location;
+import org.bukkit.block.Chest;
+import org.bukkit.inventory.ItemStack;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -18,12 +21,18 @@ public class TNESign {
 
   private Location location;
   private Location attached;
+  private Chest chest;
   private String type;
   private UUID owner;
   private UUID creator;
   private Long creationDate;
   private boolean admin;
   private int step;
+  private ItemStack trade;
+  private boolean currency;
+  private BigDecimal cost;
+  private boolean selling;
+  private ItemStack offer;
 
   public TNESign(Location location, Location attached, String type, UUID owner, UUID creator, long creationDate, boolean admin, int step) {
     this.location = location;
@@ -46,6 +55,57 @@ public class TNESign {
     this.admin = admin;
     this.step = step;
     loadExtraData(data);
+  }
+
+  public ItemStack getOffer() {
+    return offer;
+  }
+
+  public void setOffer(ItemStack offer) {
+    this.offer = offer;
+  }
+
+  public boolean isSelling() {
+    return selling;
+  }
+
+  public void setSelling(boolean selling) {
+    this.selling = selling;
+  }
+
+  public boolean isCurrency() {
+    return currency;
+  }
+
+  public void setCurrency(boolean currency) {
+    this.currency = currency;
+  }
+
+  public BigDecimal getCost() {
+    return cost;
+  }
+
+  public void setCost(BigDecimal cost) {
+    this.cost = cost;
+  }
+
+  public ItemStack getTrade() {
+    if(trade == null) {
+      return trade;
+    }
+    return trade.clone();
+  }
+
+  public void setTrade(ItemStack trade) {
+    this.trade = trade;
+  }
+
+  public void setChest(Chest chest) {
+    this.chest = chest;
+  }
+
+  public Chest getChest() {
+    return chest;
   }
 
   public Location getLocation() {
@@ -118,4 +178,21 @@ public class TNESign {
 
   public void loadExtraData(String data) {
   }
+
+  @Override
+  public String toString() {
+    return "TNESign{" +
+            "location=" + location +
+            ", attached=" + attached +
+            ", chest=" + chest +
+            ", type='" + type + '\'' +
+            ", owner=" + owner +
+            ", creator=" + creator +
+            ", creationDate=" + creationDate +
+            ", admin=" + admin +
+            ", step=" + step +
+            ", trade=" + trade +
+            '}';
+  }
+
 }

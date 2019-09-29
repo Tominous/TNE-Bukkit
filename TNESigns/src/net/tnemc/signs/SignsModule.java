@@ -1,5 +1,7 @@
 package net.tnemc.signs;
 
+import com.craftimize.fix.net.tnemc.signs.SignDataStore;
+import com.craftimize.fix.net.tnemc.signs.ChunkLoadUnloadListener;
 import net.tnemc.config.CommentedConfiguration;
 import net.tnemc.core.TNE;
 import net.tnemc.core.commands.TNECommand;
@@ -49,6 +51,7 @@ public class SignsModule implements Module {
   private SignsConfiguration configuration;
 
   private SignsManager manager;
+  private SignDataStore signDataStore;
 
   private static SignsModule instance;
 
@@ -59,6 +62,7 @@ public class SignsModule implements Module {
 
   @Override
   public void load(TNE tne) {
+    signDataStore = new SignDataStore(tne);
     TNE.logger().info("Signs Module loaded!");
   }
 
@@ -72,7 +76,7 @@ public class SignsModule implements Module {
     listeners.add(new BlockListener(plugin));
     listeners.add(new PlayerListener(plugin));
     listeners.add(new ChestSelectionListener(plugin));
-
+    listeners.add(new ChunkLoadUnloadListener(signDataStore));
     return listeners;
   }
 
@@ -153,5 +157,9 @@ public class SignsModule implements Module {
 
   public SignsConfiguration getConfiguration() {
     return configuration;
+  }
+
+  public SignDataStore getSignDataStore() {
+    return signDataStore;
   }
 }

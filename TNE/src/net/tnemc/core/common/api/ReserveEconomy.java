@@ -37,82 +37,66 @@ public class ReserveEconomy implements ExtendedEconomyAPI {
     this.plugin = plugin;
   }
 
-  @Override
   public String name() {
     return "TheNewEconomy";
   }
 
-  @Override
   public String version() {
     return "0.1.3.0";
   }
 
-  @Override
   public boolean enabled() {
     return true;
   }
 
-  @Override
   public String currencyDefaultPlural() {
     return TNE.manager().currencyManager().get(TNE.instance().defaultWorld).name();
   }
 
-  @Override
   public String currencyDefaultSingular() {
     return TNE.manager().currencyManager().get(TNE.instance().defaultWorld).name();
   }
 
-  @Override
   public String currencyDefaultPlural(String world) {
     return TNE.manager().currencyManager().get(TNE.instance().defaultWorld).name();
   }
 
-  @Override
   public String currencyDefaultSingular(String world) {
     return TNE.manager().currencyManager().get(TNE.instance().defaultWorld).name();
   }
 
-  @Override
   public boolean hasCurrency(String name) {
     return TNE.instance().api().hasCurrency(name);
   }
 
-  @Override
   public boolean hasCurrency(String name, String world) {
     return TNE.instance().api().hasCurrency(name, world);
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasCurrency(String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasCurrency(String s, String s1) {
     return null;
   }
 
-  @Override
   public Currency getDefault() {
     return TNE.instance().api().getDefault();
   }
 
-  @Override
   public Currency getDefault(String world) {
     return TNE.instance().api().getDefault(world);
   }
 
-  @Override
   public Set<Currency> getCurrencies() {
     return new HashSet<>(TNE.instance().getWorldManager(TNE.instance().defaultWorld).getCurrencies());
   }
 
-  @Override
   public Set<Currency> getCurrencies(String world) {
     return new HashSet<>(TNE.instance().getWorldManager(world).getCurrencies());
   }
 
-  @Override
   public Currency getCurrency(String currency) {
     for(TNECurrency cur : TNE.manager().currencyManager().getCurrencies()) {
       if(cur.name().equalsIgnoreCase(currency)) return cur;
@@ -120,859 +104,688 @@ public class ReserveEconomy implements ExtendedEconomyAPI {
     return null;
   }
 
-  @Override
   public Currency getCurrency(String currency, String world) {
     return TNE.manager().currencyManager().get(world, currency);
   }
 
-  @Override
   public boolean hasTier(String name, Currency currency) {
     return TNE.manager().currencyManager().get(TNE.instance().defaultWorld, currency.name()).hasTier(name);
   }
 
-  @Override
   public boolean hasTier(String name, Currency currency, String world) {
     return TNE.manager().currencyManager().get(world, currency.name()).hasTier(name);
   }
 
-  @Override
   public Set<Tier> getTiers(Currency currency) {
     return TNE.manager().currencyManager().get(TNE.instance().defaultWorld, currency.name()).getTiers();
   }
 
-  @Override
   public boolean hasAccount(String identifier) {
     return TNE.instance().api().hasAccount(identifier);
   }
 
-  @Override
   public boolean hasAccount(UUID identifier) {
     return TNE.instance().api().hasAccount(identifier);
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasAccount(String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasAccount(UUID uuid) {
     return null;
   }
 
-  @Override
   public Account getAccount(String identifier) {
     return TNE.instance().api().getAccount(identifier);
   }
 
-  @Override
   public Account getAccount(UUID identifier) {
     return TNE.instance().api().getAccount(identifier);
   }
 
-  @Override
   public boolean createAccount(String identifier) {
     return TNE.instance().api().createAccount(identifier);
   }
 
-  @Override
   public boolean createAccount(UUID identifier) {
     return TNE.instance().api().createAccount(identifier);
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCreateAccount(String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCreateAccount(UUID uuid) {
     return null;
   }
 
-  @Override
   public boolean deleteAccount(String identifier) {
     return TNE.manager().deleteAccount(IDFinder.getID(identifier));
   }
 
-  @Override
   public boolean deleteAccount(UUID identifier) {
     return TNE.manager().deleteAccount(identifier);
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncDeleteAccount(String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncDeleteAccount(UUID uuid) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanWithdraw(String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanWithdraw(String s, UUID uuid) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanWithdraw(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanWithdraw(UUID uuid, UUID uuid1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanDeposit(String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanDeposit(String s, UUID uuid) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanDeposit(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanDeposit(UUID uuid, UUID uuid1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetHoldings(String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetHoldings(UUID uuid) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetHoldings(String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetHoldings(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetHoldings(String s, String s1, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetHoldings(UUID uuid, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasHoldings(String s, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasHoldings(UUID uuid, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasHoldings(String s, BigDecimal bigDecimal, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasHoldings(UUID uuid, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasHoldings(String s, BigDecimal bigDecimal, String s1, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncSetHoldings(String s, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncSetHoldings(UUID uuid, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncSetHoldings(String s, BigDecimal bigDecimal, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncSetHoldings(UUID uuid, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncSetHoldings(String s, BigDecimal bigDecimal, String s1, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncSetHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncAddHoldings(String s, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncAddHoldings(UUID uuid, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncAddHoldings(String s, BigDecimal bigDecimal, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncAddHoldings(UUID uuid, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncAddHoldings(String s, BigDecimal bigDecimal, String s1, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncAddHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanAddHoldings(String s, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanAddHoldings(UUID uuid, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanAddHoldings(String s, BigDecimal bigDecimal, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanAddHoldings(UUID uuid, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanAddHoldings(String s, BigDecimal bigDecimal, String s1, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanAddHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncRemoveHoldings(String s, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncRemoveHoldings(UUID uuid, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncRemoveHoldings(String s, BigDecimal bigDecimal, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncRemoveHoldings(UUID uuid, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncRemoveHoldings(String s, BigDecimal bigDecimal, String s1, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncRemoveHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanRemoveHoldings(String s, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanRemoveHoldings(UUID uuid, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanRemoveHoldings(String s, BigDecimal bigDecimal, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanRemoveHoldings(UUID uuid, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanRemoveHoldings(String s, BigDecimal bigDecimal, String s1, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanRemoveHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncTransferHoldings(String s, String s1, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncTransferHoldings(String s, String s1, BigDecimal bigDecimal, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncTransferHoldings(String s, String s1, BigDecimal bigDecimal, String s2, String s3) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncTransferHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncTransferHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncTransferHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanTransferHoldings(String s, String s1, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanTransferHoldings(String s, String s1, BigDecimal bigDecimal, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanTransferHoldings(String s, String s1, BigDecimal bigDecimal, String s2, String s3) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanTransferHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanTransferHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncCanTransferHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public List<String> getBanks() {
     return null;
   }
 
-  @Override
   public List<String> getBanks(String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<List<String>> asyncGetBanks() {
     return null;
   }
 
-  @Override
   public CompletableFuture<List<String>> asyncGetBanks(String s) {
     return null;
   }
 
-  @Override
   public List<String> acceptedBankCurrencies() {
     return null;
   }
 
-  @Override
   public List<String> acceptedBankCurrencies(String s) {
     return null;
   }
 
-  @Override
   public List<String> acceptedBankCurrencies(String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<List<String>> asyncAcceptedBankCurrencies() {
     return null;
   }
 
-  @Override
   public CompletableFuture<List<String>> asyncAcceptedBankCurrencies(String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<List<String>> asyncAcceptedBankCurrencies(String s, String s1) {
     return null;
   }
 
-  @Override
   public List<UUID> availableBankAccounts(UUID uuid) {
     return null;
   }
 
-  @Override
   public List<UUID> availableBankAccounts(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public List<UUID> availableBankAccounts(UUID uuid, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<List<UUID>> asyncAvailableBankAccounts(UUID uuid) {
     return null;
   }
 
-  @Override
   public CompletableFuture<List<UUID>> asyncAvailableBankAccounts(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<List<UUID>> asyncAvailableBankAccounts(UUID uuid, String s, String s1) {
     return null;
   }
 
-  @Override
   public boolean isBankOwner(UUID uuid, String s) {
     return false;
   }
 
-  @Override
   public boolean isBankOwner(UUID uuid, String s, String s1) {
     return false;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncIsBankOwner(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncIsBankOwner(UUID uuid, String s, String s1) {
     return null;
   }
 
-  @Override
   public Optional<UUID> createBankAccount(UUID uuid) {
     return Optional.empty();
   }
 
-  @Override
   public Optional<UUID> createBankAccount(UUID uuid, String s) {
     return Optional.empty();
   }
 
-  @Override
   public Optional<UUID> createBankAccount(UUID uuid, String s, String s1) {
     return Optional.empty();
   }
 
-  @Override
   public CompletableFuture<Optional<UUID>> asyncCreateBankAccount(UUID uuid) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Optional<UUID>> asyncCreateBankAccount(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Optional<UUID>> asyncCreateBankAccount(UUID uuid, String s, String s1) {
     return null;
   }
 
-  @Override
   public boolean hasBankAccount(UUID uuid) {
     return false;
   }
 
-  @Override
   public boolean hasBankAccount(UUID uuid, String s) {
     return false;
   }
 
-  @Override
   public boolean hasBankAccount(UUID uuid, String s, String s1) {
     return false;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasBankAccount(UUID uuid) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasBankAccount(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncHasBankAccount(UUID uuid, String s, String s1) {
     return null;
   }
 
-  @Override
   public boolean isBankAccountOwner(UUID uuid, UUID uuid1) {
     return false;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncIsBankAccountOwner(UUID uuid, UUID uuid1) {
     return null;
   }
 
-  @Override
   public boolean isBankAccountMember(UUID uuid, UUID uuid1) {
     return false;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncIsBankAccountMember(UUID uuid, UUID uuid1) {
     return null;
   }
 
-  @Override
   public BigDecimal getBankHoldings(UUID uuid) {
     return null;
   }
 
-  @Override
   public BigDecimal getBankHoldings(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public BigDecimal getBankHoldings(UUID uuid, String s, String s1) {
     return null;
   }
 
-  @Override
   public BigDecimal getBankHoldings(UUID uuid, String s, String s1, String s2) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetBankHoldings(UUID uuid) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetBankHoldings(UUID uuid, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetBankHoldings(UUID uuid, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<BigDecimal> asyncGetBankHoldings(UUID uuid, String s, String s1, String s2) {
     return null;
   }
 
-  @Override
   public boolean bankAddHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal) {
     return false;
   }
 
-  @Override
   public boolean bankAddHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s) {
     return false;
   }
 
-  @Override
   public boolean bankAddHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1) {
     return false;
   }
 
-  @Override
   public boolean bankAddHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1, String s2) {
     return false;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankAddHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankAddHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankAddHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankAddHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1, String s2) {
     return null;
   }
 
-  @Override
   public boolean bankRemoveHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal) {
     return false;
   }
 
-  @Override
   public boolean bankRemoveHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s) {
     return false;
   }
 
-  @Override
   public boolean bankRemoveHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1) {
     return false;
   }
 
-  @Override
   public boolean bankRemoveHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1, String s2) {
     return false;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankRemoveHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankRemoveHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankRemoveHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankRemoveHoldings(UUID uuid, UUID uuid1, BigDecimal bigDecimal, String s, String s1, String s2) {
     return null;
   }
 
-  @Override
   public boolean bankSetHoldings(UUID uuid, BigDecimal bigDecimal) {
     return false;
   }
 
-  @Override
   public boolean bankSetHoldings(UUID uuid, BigDecimal bigDecimal, String s) {
     return false;
   }
 
-  @Override
   public boolean bankSetHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1) {
     return false;
   }
 
-  @Override
   public boolean bankSetHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1, String s2) {
     return false;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankSetHoldings(UUID uuid, BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankSetHoldings(UUID uuid, BigDecimal bigDecimal, String s) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankSetHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1) {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncBankSetHoldings(UUID uuid, BigDecimal bigDecimal, String s, String s1, String s2) {
     return null;
   }
 
-  @Override
   public Account createIfNotExists(String identifier) {
     if(!hasAccount(identifier)) createAccount(identifier);
     return getAccount(identifier);
   }
 
-  @Override
   public Account createIfNotExists(UUID uuid) {
     if(!hasAccount(uuid)) createAccount(uuid);
     return getAccount(uuid);
   }
 
-  @Override
   public String format(BigDecimal amount) {
     return TNE.instance().api().format(amount, TNE.instance().defaultWorld);
   }
 
-  @Override
   public String format(BigDecimal amount, String world) {
     return TNE.instance().api().format(amount, world);
   }
 
-  @Override
   public boolean purgeAccounts() {
     return false;
   }
 
-  @Override
   public boolean purgeAccountsUnder(BigDecimal bigDecimal) {
     return false;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncPurgeAccounts() {
     return null;
   }
 
-  @Override
   public CompletableFuture<Boolean> asyncPurgeAccountsUnder(BigDecimal bigDecimal) {
     return null;
   }
 
-  @Override
   public String format(BigDecimal amount, Currency currency) {
     return CurrencyFormatter.format(TNECurrency.fromReserve(currency), TNE.instance().defaultWorld, amount, "");
   }
 
-  @Override
   public String format(BigDecimal amount, Currency currency, String world) {
     return CurrencyFormatter.format(TNECurrency.fromReserve(currency), world, amount, "");
   }
 
-  @Override
   public boolean supportTransactions() {
     return true;
   }
 
-  @Override
   public TransactionResult performTransaction(Transaction transaction) {
     return null;
   }
 
-  @Override
   public boolean voidTransaction(UUID uuid) {
     return TNE.instance().api().voidTransaction(uuid);
   }
 
-  @Override
   public Set<TransactionType> getTransactionTypes() {
     return TNE.instance().api().getTransactionTypes();
   }
 
-  @Override
   public boolean registerTransactionType(TransactionType transactionType) {
     return TNE.instance().api().registerTransactionType(transactionType);
   }
 
-  @Override
   public boolean registerTransactionResult(TransactionResult transactionResult) {
     return TNE.instance().api().registerTransactionResult(transactionResult);
   }
 
-  @Override
   public boolean registerCurrency(Currency currency) {
     return TNE.instance().api().registerCurrency(TNECurrency.fromReserve(currency));
   }
 
-  @Override
   public boolean registerCurrency(Currency currency, String world) {
     return TNE.instance().api().registerCurrency(TNECurrency.fromReserve(currency), world);
   }
 
-  @Override
   public boolean registerTier(Tier tier, Currency currency) {
     return TNE.instance().api().registerTier(TNETier.fromReserve(tier), TNECurrency.fromReserve(currency));
   }
 
-  @Override
   public boolean registerTier(Tier tier, Currency currency, String world) {
     return TNE.instance().api().registerTier(TNETier.fromReserve(tier), TNECurrency.fromReserve(currency), world);
   }
 
-  @Override
   public Map<UUID, Transaction> getTransactions(String identifier) {
     return TNE.instance().api().getTransactions(identifier);
   }
 
-  @Override
   public Map<UUID, Transaction> getTransactions() {
     return TNE.instance().api().getTransactions();
   }
 
-  @Override
   public Optional<Transaction> getTransaction(UUID uuid) {
     return TNE.instance().api().getTransaction(uuid);
   }

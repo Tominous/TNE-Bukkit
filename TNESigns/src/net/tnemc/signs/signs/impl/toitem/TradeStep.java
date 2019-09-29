@@ -41,20 +41,14 @@ public class TradeStep implements SignStep {
     if(!rightClick) return false;
 
     final Player playerInstance = Bukkit.getPlayer(player);
-    TNESign loaded = null;
-    try {
-      loaded = SignsData.loadSign(sign.getLocation());
-    } catch (SQLException ignore) {
-      playerInstance.sendMessage(ChatColor.RED + "Error while changing shop trade.");
-      return false;
-    }
+    TNESign loaded = SignsData.loadSign(sign.getLocation());
 
     if(loaded != null) {
 
       try {
         final boolean admin = ItemSign.isAdmin(sign.getLocation());
         final Chest chest = (admin)? null : SignsData.chest(sign.getLocation());
-        final ItemStack item = ItemSign.getItem(sign.getLocation());
+        final ItemStack item = ItemSign.getOffer(sign.getLocation());
 
 
         if(item != null) {

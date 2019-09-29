@@ -35,10 +35,7 @@ public class ItemSelectionStep implements SignStep {
   @Override
   public boolean onSignInteract(Sign sign, UUID player, boolean rightClick, boolean shifting) {
     TNE.debug("ItemSelect Interaction");
-    TNESign loaded = null;
-    try {
-      loaded = SignsData.loadSign(sign.getLocation());
-    } catch (SQLException ignore) { }
+    TNESign loaded = SignsData.loadSign(sign.getLocation());
 
     final Player playerInstance = Bukkit.getPlayer(player);
     if(loaded != null) {

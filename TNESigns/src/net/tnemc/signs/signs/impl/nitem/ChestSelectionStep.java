@@ -35,13 +35,7 @@ public class ChestSelectionStep implements SignStep {
   @Override
   public boolean onSignInteract(Sign sign, UUID player, boolean rightClick, boolean shifting) {
     final Player playerInstance = Bukkit.getPlayer(player);
-    TNESign loaded = null;
-    try {
-      loaded = SignsData.loadSign(sign.getLocation());
-    } catch (SQLException ignore) {
-      playerInstance.sendMessage(ChatColor.RED + "Error while changing shop trade.");
-      return false;
-    }
+    TNESign loaded = SignsData.loadSign(sign.getLocation());
 
     if(loaded != null) {
       if(!NationItemSign.hasPerms(loaded.getOwner(), player)) {

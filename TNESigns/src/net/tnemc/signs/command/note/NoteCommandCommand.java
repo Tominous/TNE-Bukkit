@@ -28,32 +28,26 @@ public class NoteCommandCommand extends TNECommand {
     super(plugin);
   }
 
-  @Override
   public String name() {
     return "command";
   }
 
-  @Override
   public String[] aliases() {
     return new String[0];
   }
 
-  @Override
   public String node() {
     return "tne.note.command";
   }
 
-  @Override
   public boolean console() {
     return false;
   }
 
-  @Override
   public String helpLine() {
     return "/note command <command> - Creates a note that will run a specific command on right click. Use $player to include player usernames in the command.";
   }
 
-  @Override
   public boolean execute(CommandSender sender, String command, String[] arguments) {
 
     if(arguments.length < 1) {

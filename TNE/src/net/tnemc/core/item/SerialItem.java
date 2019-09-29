@@ -311,6 +311,9 @@ public class SerialItem {
     TNE.debug("JSON: " + helper.toString());
     TNE.debug("fromJSON");
     Material material = Material.matchMaterial(helper.getString("material"));
+    if(material == null || material == Material.AIR) {
+      return null;
+    }
     TNE.debug("Material: " + material.name());
     ItemStack stack = new ItemStack(material, helper.getInteger("amount"));
     TNE.debug("Stack Created");

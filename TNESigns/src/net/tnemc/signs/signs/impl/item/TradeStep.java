@@ -41,24 +41,18 @@ public class TradeStep implements SignStep {
     if(!rightClick) return false;
 
     final Player playerInstance = Bukkit.getPlayer(player);
-    TNESign loaded = null;
-    try {
-      loaded = SignsData.loadSign(sign.getLocation());
-    } catch (SQLException ignore) {
-      playerInstance.sendMessage(ChatColor.RED + "Error while changing shop trade.");
-      return false;
-    }
+    TNESign loaded = SignsData.loadSign(sign.getLocation());
 
     if(loaded != null) {
 
       try {
         final boolean admin = ItemSign.isAdmin(sign.getLocation());
         final Chest chest = (admin)? null : SignsData.chest(sign.getLocation());
-        final ItemStack item = ItemSign.getItem(sign.getLocation());
+        final ItemStack item = ItemSign.getOffer(sign.getLocation());
 
 
         TNE.debug("Item Null?: " + (item == null));
-        if(item != null) {
+        if(item != null && chest != null) {
           TNE.debug("Trade Enchant Size: " + item.getEnchantments().size());
           TNE.debug("TradeEnchant Size: " + item.getItemMeta().getEnchants().size());
           TNE.debug("Damage: " + item.getDurability());
@@ -93,7 +87,7 @@ public class TradeStep implements SignStep {
           } else {
             cost = ItemSign.getTrade(sign.getLocation());
             ItemMeta meta = cost.getItemMeta();
-            meta.setLore(Collections.singletonList(meta.getDisplayName()));
+            meta.setLore(Collections.singletonList(cost.getType().name().charAt(0) + cost.getType().name().substring(1).toLowerCase()));
             cost.setItemMeta(meta);
           }
           TNE.menuManager().setViewerData(player, "shop_cost", cost);

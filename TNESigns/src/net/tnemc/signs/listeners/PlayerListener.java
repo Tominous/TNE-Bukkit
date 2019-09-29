@@ -57,6 +57,7 @@ public class PlayerListener implements ModuleListener {
       return;
     }
 
+    TNE.debug("Valid interaction");
     final Block block = event.getClickedBlock();
     if(block.getState() instanceof Sign) {
       final String identifier = ((Sign)block.getState()).getLine(0);
@@ -79,12 +80,7 @@ public class PlayerListener implements ModuleListener {
             if (event.getClickedBlock().getState() instanceof Chest) {
               Sign sign = new ChestHelper((Chest) event.getClickedBlock().getState()).getSign();
               if (sign != null) {
-                TNESign signInstance = null;
-                try {
-                  signInstance = SignsData.loadSign(sign.getBlock().getLocation());
-                } catch (SQLException e) {
-                  e.printStackTrace();
-                }
+                TNESign signInstance = SignsData.loadSign(sign.getBlock().getLocation());
                 if (signInstance != null) {
                   if (!SignsModule.manager().getType(signInstance.getType()).onChest(signInstance.getOwner(), event.getPlayer().getUniqueId())
                       && !event.getPlayer().hasPermission("tne.chest.antiprotect")) {

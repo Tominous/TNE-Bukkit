@@ -39,7 +39,7 @@ public class ConfirmIcon extends Icon {
     final Location location = (Location) TNE.menuManager().getViewerData(id, "action_shop");
 
     try {
-      ItemSign.saveItemOffer(location, null, true, amount);
+      ItemSign.saveItemTrade(location, null, true, amount);
 
       if(ItemSign.isAdmin(location)) {
         SignsData.updateStep(location, 4);

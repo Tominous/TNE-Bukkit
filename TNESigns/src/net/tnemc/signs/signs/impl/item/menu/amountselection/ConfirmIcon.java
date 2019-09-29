@@ -11,6 +11,7 @@ import net.tnemc.signs.signs.impl.ItemSign;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -39,7 +40,7 @@ public class ConfirmIcon extends Icon {
     final Location location = (Location) TNE.menuManager().getViewerData(id, "action_shop");
 
     try {
-      ItemSign.saveItemOffer(location, null, true, amount);
+      ItemSign.saveItemTrade(location, (ItemStack) null, true, amount);
 
       if(ItemSign.isAdmin(location)) {
         SignsData.updateStep(location, 4);
