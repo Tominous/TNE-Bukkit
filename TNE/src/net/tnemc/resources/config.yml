@@ -14,7 +14,7 @@ Core:
     Multiworld: false
 
     #Whether or not to load TNE in debug mode.
-    Debug: false
+    Debug: true
 
     #All configurations relating to the server in general.
     Server:
@@ -115,7 +115,7 @@ Core:
     Transactions:
 
         #The time format to use when displaying transaction history data.
-        Format: M, d y
+        Format: dd, MM yyyy
 
         #The timezone to use for transactions.
         Timezone: US/Eastern
@@ -136,7 +136,7 @@ Core:
         Info:
 
             #Whether or not you wish to use advanced currencies, which utilize the currency.yml configuration file.
-            Advanced: false
+            Advanced: true
 
             #Whether or not to format the balances in /bal.
             FormatMoney: true
@@ -248,7 +248,7 @@ Core:
            Note:
 
              #Whether or not this currency is able to be noted using the note command
-             Notable: false
+             Notable: true
 
              #The fee to note this currency.
              Fee: 0.00
